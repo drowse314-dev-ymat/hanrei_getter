@@ -73,7 +73,7 @@ def create_hanrei_elem():
     import HTMLParser
     hp = HTMLParser.HTMLParser()
     hanrei_elem = hanreifetch.JikenParser().create_hanrei_element(sample_jiken(), hanreiid='52442')
-    expected_elem = etree.fromstring(sample_jiken_xml().encode('utf8')).findall(u'./Hanrei')[0]
+    expected_elem = etree.fromstring(sample_jiken_xml().encode(hanreifetch.XML_ENCODING)).findall(u'./Hanrei')[0]
     hanrei_xml = hp.unescape(etree.tostring(hanrei_elem, pretty_print=True)).strip()
     expected_xml = hp.unescape(etree.tostring(expected_elem, pretty_print=True)).strip()
     assert (

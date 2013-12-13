@@ -15,6 +15,7 @@ from lxml import html, etree
 
 LIST_HTML_ENCODING = 'sjis'
 JIKEN_HTML_ENCODING = 'sjis'
+XML_ENCODING = 'UTF-8'
 
 URI_BASE = u'http://www.courts.go.jp'
 
@@ -272,6 +273,6 @@ class JikenParser(object):
             root.append(hanrei_elem)
         xml = etree.tostring(
             root, pretty_print=True,
-            xml_declaration=True, encoding='UTF-8',
-        ).decode('utf8')
+            xml_declaration=True, encoding=XML_ENCODING,
+        ).decode(XML_ENCODING)
         return self._clean_entity(xml)
