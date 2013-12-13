@@ -57,7 +57,7 @@ def create_hanrei_struct():
     hanrei = hanreifetch.JikenParser().create_struct_from(sample_jiken())
     expected_attrmap = sample_jiken_struct_attrmap()
     for key in expected_attrmap:
-        assert getattr(hanrei, key) == expected_attrmap[key], u'{}: {}'.format(getattr(hanrei, key), expected_attrmap[key]).encode('utf8')
+        assert getattr(hanrei, key) == expected_attrmap[key]
 
 def fetch_full_text():
     full_text = hanreifetch.full_text_from_pdfdata(sample_hanrei_pdfdata())
