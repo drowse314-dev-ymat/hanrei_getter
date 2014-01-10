@@ -11,7 +11,11 @@ except ImportError:
     import HTMLParser as htmlparser
 import requests
 from lxml import html, etree
+import logbook
 
+
+logger_handler = logbook.StderrHandler()
+logger_handler.format_string = '({record.channel}[{record.time:%H:%M}]) {record.message}'
 
 LIST_HTML_ENCODING = 'sjis'
 JIKEN_HTML_ENCODING = 'sjis'
@@ -25,10 +29,16 @@ RE_HANREI_ID = re.compile(u'\/search\/jhsp0030\?hanreiid=(\d+)&hanreiKbn=\d+')
 
 class SleepyRequests(object):
 
+    class_logger = logbook.Logger('delay-requester')
+    class_logger.handlers.append(logger_handler)
     delay = 30.0
 
     def __init__(self):
         self._is_tired = False
+
+    @property
+    def logger(self):
+        return self.__class__.class_logger
 
     @property
     def requests(self):
@@ -44,7 +54,7 @@ class SleepyRequests(object):
         return requests
 
     def apologize(self, delay):
-        print('module requests is sleepy... wait for {} seconds'.format(delay))
+        self.logger.info('module requests is sleepy... wait for {} seconds'.format(delay))
 
 
 sleepy = SleepyRequests()

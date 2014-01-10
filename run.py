@@ -3,7 +3,11 @@
 import os
 import argparse
 import hanreifetch
+import logbook
 
+
+logger = logbook.Logger('hanrei-collect')
+logger.handlers.append(hanreifetch.logger_handler)
 
 SAVE_INTO = os.path.abspath(os.path.sep.join(
     [u'.', u'./hanreidata']
@@ -36,14 +40,14 @@ class HanreiXMLCreator(object):
     def process_html(self, html_path, tofile=None):
         if tofile is None:
             tofile = make_xml_filname(html_path)
-        print(u'-- going to save xml to "{}"'.format(tofile))
+        logger.notice(u'-- going to save xml to "{}"'.format(tofile))
 
         if not self.check_cache(tofile):
 
             html_text = self.load_html(html_path)
             jiken_uris = list(self.jiken_uris(html_text))
 
-            print(u'-- {} hanrei links found'.format(len(jiken_uris)))
+            logger.notice(u'-- {} hanrei links found'.format(len(jiken_uris)))
 
             with open(tofile, 'wb') as xmlfile:
                 xmltext = self._jikenparser.create_xml_from(self.iter_jiken_html(jiken_uris))
@@ -51,9 +55,9 @@ class HanreiXMLCreator(object):
                 xmlfile.write(as_bytes)
 
         else:
-            print(u'-- cache found')
+            logger.notice(u'-- cache found')
 
-        print(u'done!')
+        logger.notice(u'done!')
 
     def check_cache(self, tofile):
         if os.path.exists(tofile):
@@ -79,13 +83,14 @@ class HanreiXMLCreator(object):
 def run(args):
 
     html_paths = list(target_htmls(args.target_dirs))
-    print(u'{} html files found.'.format(len(html_paths)))
+    num_htmls = len(html_paths)
+    logger.notice(u'{} html files found.'.format(num_htmls))
 
     xml_creator = HanreiXMLCreator()
 
     for i, html_path in enumerate(html_paths, start=1):
 
-        print(u'#{}: processing "{}"...'.format(i, html_path)) 
+        logger.notice(u'#{}/{}: processing "{}"...'.format(i, num_htmls, html_path))
         xml_creator.process_html(html_path)
 
 
