@@ -24,7 +24,11 @@ XML_ENCODING = 'UTF-8'
 URI_BASE = u'http://www.courts.go.jp'
 
 RE_JIKEN_LINK = re.compile(u'<a href="(\/search\/jhsp0030\?hanreiid=\d+&hanreiKbn=\d+)">')
+RE_EN_JIKEN_LINK = re.compile(u'<a href="(http://www\.courts\.go\.jp/english/judgments/text/[^"]+)"')
 RE_HANREI_ID = re.compile(u'\/search\/jhsp0030\?hanreiid=(\d+)&hanreiKbn=\d+')
+RE_EN_HANREI_ID = re.compile(
+    u'http://www\.courts\.go\.jp/english/judgments/text/\d{4}\.\d{2}\.\d{2}-(.+)\.html'
+)
 
 
 class SleepyRequests(object):
@@ -69,14 +73,41 @@ def read_html(filepath):
 
 
 class ListHandler(object):
-    
+
+    re_jiken_link = RE_JIKEN_LINK
+    re_hanrei_id = RE_HANREI_ID
+
     def jiken_links_from(self, html_text):
-        return RE_JIKEN_LINK.findall(html_text)
+        links = self.__class__.re_jiken_link.findall(html_text)
+        return self._listuniq(links)
 
     def hanreiid_from(self, jiken_path):
-        matched = RE_HANREI_ID.match(jiken_path)
+        matched = self.__class__.re_hanrei_id.match(jiken_path)
         assert bool(matched)
         return matched.groups()[0]
+
+    def _listuniq(self, items):
+        uniq = []
+        for el in items:
+            if el not in uniq:
+                uniq.append(el)
+        return uniq
+
+
+class EnListHandler(ListHandler):
+
+    re_jiken_link = RE_EN_JIKEN_LINK
+    re_hanrei_id = RE_EN_HANREI_ID
+
+    def hanreiid_from(self, jiken_path):
+        matched = super(EnListHandler, self).hanreiid_from(jiken_path)
+        hanreiid = self._transform_en_hanreiid(matched)
+        return hanreiid
+
+    def _transform_en_hanreiid(self, raw_hanrei_num):
+        hanreiid = raw_hanrei_num.replace(u'.', u'')
+        hanreiid = hanreiid.replace(u'No', u'No.')
+        return hanreiid
 
 
 def fetch_jiken_html(jiken_uri):
@@ -133,17 +164,24 @@ Hanrei = collections.namedtuple('Hanrei', HANREI_ATTRS)
 
 class JikenParser(object):
 
+    attr_map = HANREI_ATTR_NAME_MAP
+    attr_converters = HANREI_ATTR_CONVERTERS
+
     def hanrei_attrs_from(self, html_text):
         clean_text = self._clean_entity(html_text)
         elem = html.fromstring(clean_text)
-        for dlist in self._listdiv_from(elem):
-            for attrdiv in self._attrdiv_from(dlist):
-                attr, attr_val = self._parse_attrdiv(attrdiv)
-                yield (attr, attr_val)
+        for attr, attr_val in self.attrs_from_elem(elem):
+            yield (attr, attr_val)
 
     def _clean_entity(self, html_text):
         hp = htmlparser.HTMLParser()
         return hp.unescape(html_text)
+
+    def attrs_from_elem(self, elem):
+        for dlist in self._listdiv_from(elem):
+            for attrdiv in self._attrdiv_from(dlist):
+                attr, attr_val = self._parse_attrdiv(attrdiv)
+                yield attr, attr_val
 
     def _listdiv_from(self, any_elem):
         divs = any_elem.findall(u'.//div')
@@ -174,11 +212,35 @@ class JikenParser(object):
 
     def create_struct_from(self, html_text):
         attrs = {}
+        def _regattr(k, v):
+            attrs[k] = v
+
         for readable_attr, raw_val in self.hanrei_attrs_from(html_text):
-            attr = HANREI_ATTR_NAME_MAP[readable_attr]
-            val = HANREI_ATTR_CONVERTERS.get(attr, lambda v:v)(raw_val)
-            attrs[attr] = val
+            readable_attr = self.attr_name_hook(readable_attr)
+            attr = self.__class__.attr_map[readable_attr]
+            converters = self.__class__.attr_converters
+            if attr is None:
+                pass
+            elif isinstance(attr, list):
+                for a in attr:
+                    val = converters.get(a, lambda v:v)(raw_val)
+                    _regattr(a, val)
+            else:
+                val = converters.get(attr, lambda v:v)(raw_val)
+                _regattr(attr, val)
+
+        attrs = self.attrs_setup(attrs)
+        for key in attrs.keys():
+            if key not in HANREI_ATTRS:
+                attrs.pop(key)
+
         return Hanrei(**attrs)
+
+    def attr_name_hook(self, attr_name):
+        return attr_name
+
+    def attrs_setup(self, attrs):
+        return attrs
 
     def get_full_text(self, pdf_uri):
         res = sleepy.requests.get(pdf_uri)
@@ -193,7 +255,7 @@ class JikenParser(object):
         hanji_jikou = etree.Element(u'HanjiJikou')
         abstract = etree.Element(u'Abstract')
         referred_legislation = etree.Element(u'ReferredLegislations')
-        full_text = self._create_full_text_elem(hanrei_struct)
+        full_text = self.create_full_text_elem(hanrei_struct)
 
         hanji_jikou.text = hanrei_struct.hanji_jikou
         abstract.text = hanrei_struct.abstract
@@ -270,7 +332,7 @@ class JikenParser(object):
 
         return origin_meta
 
-    def _create_full_text_elem(self, hanrei_struct):
+    def create_full_text_elem(self, hanrei_struct):
         text = self.get_full_text(hanrei_struct.full_text)
         full_text = etree.Element(u'FullText')
         full_text.text = text
@@ -286,3 +348,112 @@ class JikenParser(object):
             xml_declaration=True, encoding=XML_ENCODING,
         ).decode(XML_ENCODING)
         return self._clean_entity(xml)
+
+
+EN_HANREI_ATTR_NAME_MAP = {
+    u'Date': u'date',
+    u'Case number': u'jiken_no', u'Reporter': u'reference',
+    u'Title': None, u'Case name': u'jiken_name',
+    u'Result': [u'trial_type', u'court', u'decision'],
+    u'Court of the Second Instance': [u'origin_court', u'origin_date'],
+    u'Summary': u'abstract',
+    u'References': u'referred_legislation',
+    u'Main text': u'full_text_main',
+    u'Reasons': u'full_text_reason',
+    u'Presiding Judge': u'full_text_judge',
+}
+EN_HANREI_ATTR_CONVERTERS = {
+    'trial_type': (lambda v: v.split(u' of ')[0]),
+    'court': (lambda v: v.split(u' of ')[1].split(u',')[0].title()),
+    'decision': (lambda v: v.split(u', ')[1].capitalize()),
+    'origin_date': (lambda v: v.split(u' of ')[1]),
+    'origin_court': (lambda v: v.split(u',')[0]),
+    'referred_legislation': (lambda v: v.split(u'<br')[0].strip()),
+}
+
+
+class EnJikenParser(JikenParser):
+
+    attr_map = EN_HANREI_ATTR_NAME_MAP
+    attr_converters = EN_HANREI_ATTR_CONVERTERS
+
+    def attrs_from_elem(self, elem):
+        if elem.tag == u'table':
+            table_elem = elem
+        else:
+            table_elem = self._table_from(elem)
+        for tr in self._table_rows_in(table_elem):
+            attr_td, val_td = self._tdpair_from(tr)
+            attr = self._strip_only_text(attr_td)
+            val = self._strip_only_text(val_td)
+            yield (attr, val)
+
+    def _table_from(self, any_elem):
+        tables = any_elem.findall(u'.//table')
+        assert len(tables) > 0, 'data table not found'
+        for i, t in enumerate(tables):
+            t = tables[i]
+            num_trs = len(t.findall(u'.//tr'))
+            if num_trs < 2:
+                tables.pop(i)
+        assert len(tables) == 1, 'multiple data tables found'
+        return tables[0]
+
+    def _table_rows_in(self, table_elem):
+        for tr in table_elem.findall(u'.//tr'):
+            yield tr
+
+    def _tdpair_from(self, tr_elem):
+        tds = tr_elem.findall(u'.//td')
+        assert len(tds) == 2
+        attr_td, val_td = tds
+        return attr_td, val_td
+
+    def _strip_only_text(self, any_elem):
+        text = u''
+        if any_elem.text:
+            text += any_elem.text
+        for desc in any_elem.iterdescendants():
+            if desc.text:
+                text += desc.text
+            if desc.tag == u'br':
+                text += u'<br/>'  # include only breaks.
+            if desc.tail:
+                text += desc.tail
+        return text
+
+    hookers = [u'Date', u'Summary', u'Main text']
+    def attr_name_hook(self, attr_name):
+        for common_seq in self.__class__.hookers:
+            if attr_name.startswith(common_seq):
+                return common_seq
+        else:
+            return attr_name
+
+    def attrs_setup(self, attrs):
+        attrs = self._attrs_setup_missing(attrs)
+        attrs = self._make_full_text(attrs)
+        return attrs
+
+    def _attrs_setup_missing(self, attrs):
+        attrs.update(origin_jiken_no=u'', hanji_jikou=u'')
+        return attrs
+
+    def _make_full_text(self, attrs):
+        main_text = attrs.pop(u'full_text_main')
+        reason = attrs.pop(u'full_text_reason')
+        judge = attrs.pop(u'full_text_judge')
+        attrs[u'full_text'] = u'\n'.join([
+            u'Main text:',
+            main_text,
+            u'Reasons:',
+            reason,
+            u'Presiding Judge:',
+            judge,
+        ])
+        return attrs
+
+    def create_full_text_elem(self, hanrei_struct):
+        full_text = etree.Element(u'FullText')
+        full_text.text = hanrei_struct.full_text
+        return full_text

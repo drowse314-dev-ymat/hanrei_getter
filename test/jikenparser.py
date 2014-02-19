@@ -4,9 +4,12 @@ from lxml import html, etree
 import hanreifetch
 from .common import (
     sample_jiken, sample_jiken_attr_pairs,
+    sample_en_jiken, sample_en_jiken_attr_pairs,
     sample_jiken_struct_attrmap,
+    sample_en_jiken_struct_attrmap,
     sample_hanrei_full_text, sample_hanrei_pdfdata,
     sample_jiken_xml,
+    sample_en_jiken_xml,
     SAMPLE_HANREI_PDF_ORIGIN,
 )
 
@@ -48,14 +51,51 @@ def parse_single_attribute():
         (u'attr3', u'value3',),
     ]
 
+def parse_single_attribute_from_en_table():
+    attr_block_html = (
+        u'<body class="dummy">'
+        u'  <table>'
+        u'    <tr>'
+        u'      <td><pre>attr1</pre></td>'
+        u'      <td>value1</td>'
+        u'    </tr>'
+        u'    <tr>'
+        u'      <td><pre>attr2</pre></td>'
+        u'      <td>value2</td>'
+        u'    </tr>'
+        u'    <tr>'
+        u'      <td><pre>attr3</pre></td>'
+        u'      <td>value3</td>'
+        u'    </tr>'
+        u'  </table>'
+        u'</body>'
+    )
+    attrs = list(hanreifetch.EnJikenParser().hanrei_attrs_from(attr_block_html))
+    assert attrs == [
+        (u'attr1', u'value1',),
+        (u'attr2', u'value2',),
+        (u'attr3', u'value3',),
+    ]
+
 def detect_all_hanrei_attrs():
     detected = list(hanreifetch.JikenParser().hanrei_attrs_from(sample_jiken()))
     expected_attrs = sample_jiken_attr_pairs()
     assert set(detected) == set(expected_attrs)
 
+def detect_all_en_hanrei_attrs():
+    detected = list(hanreifetch.EnJikenParser().hanrei_attrs_from(sample_en_jiken()))
+    expected_attrs = sample_en_jiken_attr_pairs()
+    assert set(detected) == set(expected_attrs)
+
 def create_hanrei_struct():
     hanrei = hanreifetch.JikenParser().create_struct_from(sample_jiken())
     expected_attrmap = sample_jiken_struct_attrmap()
+    for key in expected_attrmap:
+        assert getattr(hanrei, key) == expected_attrmap[key]
+
+def create_en_hanrei_struct():
+    hanrei = hanreifetch.EnJikenParser().create_struct_from(sample_en_jiken())
+    expected_attrmap = sample_en_jiken_struct_attrmap()
     for key in expected_attrmap:
         assert getattr(hanrei, key) == expected_attrmap[key]
 
@@ -86,13 +126,22 @@ def create_hanrei_xml():
     expected_xml = sample_jiken_xml()
     assert hanrei_xml == expected_xml
 
+def create_en_hanrei_xml():
+    hanrei_xml = hanreifetch.EnJikenParser().create_xml_from([(sample_en_jiken(), '2012-Kyo-No.43')])
+    expected_xml = sample_en_jiken_xml()
+    assert hanrei_xml == expected_xml
+
 
 def run(noweb=False):
     parse_single_attribute()
+    parse_single_attribute_from_en_table()
     detect_all_hanrei_attrs()
+    detect_all_en_hanrei_attrs()
     create_hanrei_struct()
+    create_en_hanrei_struct()
     fetch_full_text()
     if not noweb:
         full_text_from_web()
         create_hanrei_elem()
         create_hanrei_xml()
+    create_en_hanrei_xml()

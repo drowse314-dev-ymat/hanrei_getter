@@ -33,9 +33,13 @@ def make_xml_filname(source_html_path):
 
 class HanreiXMLCreator(object):
 
-    def __init__(self):
-        self._listhandler = hanreifetch.ListHandler()
-        self._jikenparser = hanreifetch.JikenParser()
+    def __init__(self, en_list=False):
+        if en_list:
+            self._listhandler = hanreifetch.EnListHandler()
+            self._jikenparser = hanreifetch.EnJikenParser()
+        else:
+            self._listhandler = hanreifetch.ListHandler()
+            self._jikenparser = hanreifetch.JikenParser()
 
     def process_html(self, html_path, tofile=None):
         if tofile is None:
@@ -86,7 +90,7 @@ def run(args):
     num_htmls = len(html_paths)
     logger.notice(u'{} html files found.'.format(num_htmls))
 
-    xml_creator = HanreiXMLCreator()
+    xml_creator = HanreiXMLCreator(en_list=args.en_list)
 
     for i, html_path in enumerate(html_paths, start=1):
 
@@ -97,5 +101,6 @@ def run(args):
 if __name__ == '__main__':
     argX = argparse.ArgumentParser()
     argX.add_argument('target_dirs', nargs='+')
+    argX.add_argument('--en_list', action='store_true', default=False)
     args = argX.parse_args()
     run(args)
