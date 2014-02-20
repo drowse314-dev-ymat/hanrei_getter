@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 from lxml import html, etree
+from attest import Tests
 import hanreifetch
 from .common import (
     sample_jiken, sample_jiken_attr_pairs,
@@ -132,16 +133,18 @@ def create_en_hanrei_xml():
     assert hanrei_xml == expected_xml
 
 
-def run(noweb=False):
-    parse_single_attribute()
-    parse_single_attribute_from_en_table()
-    detect_all_hanrei_attrs()
-    detect_all_en_hanrei_attrs()
-    create_hanrei_struct()
-    create_en_hanrei_struct()
-    fetch_full_text()
+def jikenparser_unit(noweb=False):
+    tests = Tests()
+    tests.test(parse_single_attribute)
+    tests.test(parse_single_attribute_from_en_table)
+    tests.test(detect_all_hanrei_attrs)
+    tests.test(detect_all_en_hanrei_attrs)
+    tests.test(create_hanrei_struct)
+    tests.test(create_en_hanrei_struct)
+    tests.test(fetch_full_text)
     if not noweb:
-        full_text_from_web()
-        create_hanrei_elem()
-        create_hanrei_xml()
-    create_en_hanrei_xml()
+        tests.test(full_text_from_web)
+        tests.test(create_hanrei_elem)
+        tests.test(create_hanrei_xml)
+    tests.test(create_en_hanrei_xml)
+    return tests

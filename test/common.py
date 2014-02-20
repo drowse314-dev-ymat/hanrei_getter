@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 import os
+from attest import Tests
 import hanreifetch
 
 
@@ -115,6 +116,8 @@ def make_full_uri():
     assert hanreifetch.make_full_uri(link) == u'http://www.courts.go.jp/search/jhsp0030?hanreiid=52442&hanreiKbn=02'
 
 
-def run(noweb=False):
-    htmlreader()
-    make_full_uri()
+def common_unit(noweb=False):
+    tests = Tests()
+    tests.test(htmlreader)
+    tests.test(make_full_uri)
+    return tests

@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 import difflib
+from attest import Tests
 import hanreifetch
 from .common import (
     SAMPLE_JIKEN_ORIGIN,
@@ -54,12 +55,14 @@ def fetch_jiken_page():
     assert matcher.ratio() > 0.99, 'failed to fetch Jiken page correctly / if not a coding issue, check the original page'
 
 
-def run(noweb=False):
-    detect_jiken_url()
-    detect_en_jiken_url()
-    get_hanreiid()
-    get_en_hanreiid()
-    detect_all_jiken_urls()
-    detect_all_en_jiken_urls()
+def listfetch_unit(noweb=False):
+    tests = Tests()
+    tests.test(detect_jiken_url)
+    tests.test(detect_en_jiken_url)
+    tests.test(get_hanreiid)
+    tests.test(get_en_hanreiid)
+    tests.test(detect_all_jiken_urls)
+    tests.test(detect_all_en_jiken_urls)
     if not noweb:
-        fetch_jiken_page()
+        tests.test(fetch_jiken_page)
+    return tests

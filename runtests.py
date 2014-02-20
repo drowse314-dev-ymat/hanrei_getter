@@ -10,4 +10,5 @@ if __name__ == '__main__':
     argX.add_argument('--noweb', action='store_true', default=False)
     args = argX.parse_args()
 
-    test.test(args)
+    tests = test.tests(args)
+    tests.run()
