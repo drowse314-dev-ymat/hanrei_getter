@@ -370,7 +370,6 @@ EN_HANREI_ATTR_CONVERTERS = {
     'decision': (lambda v: v.split(u', ')[1].capitalize()),
     'origin_date': (lambda v: v.split(u' of ')[1]),
     'origin_court': (lambda v: v.split(u',')[0]),
-    'referred_legislation': (lambda v: v.split(u'<br')[0].strip()),
 }
 
 
