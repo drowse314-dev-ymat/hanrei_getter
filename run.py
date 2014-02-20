@@ -40,6 +40,7 @@ class HanreiXMLCreator(object):
         else:
             self._listhandler = hanreifetch.ListHandler()
             self._jikenparser = hanreifetch.JikenParser()
+        self._in_english = en_list
 
     def process_html(self, html_path, tofile=None):
         if tofile is None:
@@ -69,7 +70,11 @@ class HanreiXMLCreator(object):
         return False
 
     def load_html(self, html_path):
-        return hanreifetch.read_html(html_path)
+        if self._in_english:
+            encoding = hanreifetch.EN_LIST_HTML_ENCODING
+        else:
+            encoding = hanreifetch.LIST_HTML_ENCODING
+        return hanreifetch.read_html(html_path, encoding=encoding)
 
     def jiken_uris(self, html_text):
         listhandler = self._listhandler
@@ -77,9 +82,14 @@ class HanreiXMLCreator(object):
             yield jiken_uri, listhandler.hanreiid_from(jiken_uri)
 
     def iter_jiken_html(self, jiken_uris):
+        if self._in_english:
+            encoding = hanreifetch.EN_JIKEN_HTML_ENCODING
+        else:
+            encoding = hanreifetch.JIKEN_HTML_ENCODING
         for uri, hanrei_id in jiken_uris:
             jiken_html = hanreifetch.fetch_jiken_html(
-                hanreifetch.make_full_uri(uri)
+                hanreifetch.make_full_uri(uri),
+                encoding=encoding,
             )
             yield jiken_html, hanrei_id
 

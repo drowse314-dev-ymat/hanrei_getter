@@ -18,7 +18,9 @@ logger_handler = logbook.StderrHandler()
 logger_handler.format_string = '({record.channel}[{record.time:%H:%M}]) {record.message}'
 
 LIST_HTML_ENCODING = 'sjis'
+EN_LIST_HTML_ENCODING = 'iso-8859-1'
 JIKEN_HTML_ENCODING = 'sjis'
+EN_JIKEN_HTML_ENCODING = 'iso-8859-1'
 XML_ENCODING = 'UTF-8'
 
 URI_BASE = u'http://www.courts.go.jp'
@@ -67,8 +69,8 @@ sleepy = SleepyRequests()
 def make_full_uri(path):
     return urlparse.urljoin(URI_BASE, path)
 
-def read_html(filepath):
-    html = open(filepath, 'rb').read().decode(LIST_HTML_ENCODING)
+def read_html(filepath, encoding=LIST_HTML_ENCODING):
+    html = open(filepath, 'rb').read().decode(encoding)
     return html
 
 
@@ -110,9 +112,9 @@ class EnListHandler(ListHandler):
         return hanreiid
 
 
-def fetch_jiken_html(jiken_uri):
+def fetch_jiken_html(jiken_uri, encoding=JIKEN_HTML_ENCODING):
     res = sleepy.requests.get(jiken_uri)
-    return res.content.decode(JIKEN_HTML_ENCODING)
+    return res.content.decode(encoding)
 
 RE_PAGE_MARKER = re.compile(u'- \d+ -')
 def full_text_from_pdfdata(pdfdata):
