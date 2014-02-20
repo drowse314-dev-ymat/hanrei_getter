@@ -366,7 +366,7 @@ EN_HANREI_ATTR_NAME_MAP = {
 }
 def _origin_dater(origin_info_text):
     parts = origin_info_text.split(u' of ')
-    if len(parts) < 1:
+    if len(parts) < 2:
         return u''
     else:
         return parts[1]
