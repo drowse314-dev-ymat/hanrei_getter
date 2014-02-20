@@ -29,7 +29,7 @@ RE_JIKEN_LINK = re.compile(u'<a href="(\/search\/jhsp0030\?hanreiid=\d+&hanreiKb
 RE_EN_JIKEN_LINK = re.compile(u'<a href="(http://www\.courts\.go\.jp/english/judgments/text/[^"]+)"')
 RE_HANREI_ID = re.compile(u'\/search\/jhsp0030\?hanreiid=(\d+)&hanreiKbn=\d+')
 RE_EN_HANREI_ID = re.compile(
-    u'http://www\.courts\.go\.jp/english/judgments/text/\d{4}\.\d{2}\.\d{2}-(.+)\.html'
+    u'http://www\.courts\.go\.jp/english/judgments/text/\d{4}\.\d{1,2}\.\d{1,2}-(.+)\.html'
 )
 
 
