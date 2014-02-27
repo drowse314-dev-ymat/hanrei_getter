@@ -473,6 +473,11 @@ class EnJikenParser(JikenParser):
         return attrs
 
     def _make_full_text(self, attrs):
+        full_text_keys = (u'full_text_main', u'full_text_reason', u'full_text_judge')
+        for full_text_key in full_text_keys:
+            if full_text_key not in attrs:
+                fallback_value = self.__class__._fallback.handle_interactive(full_text_key)
+                attrs[full_text_key] = fallback_value
         main_text = attrs.pop(u'full_text_main')
         reason = attrs.pop(u'full_text_reason')
         judge = attrs.pop(u'full_text_judge')
