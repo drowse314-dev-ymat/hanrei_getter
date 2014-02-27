@@ -465,6 +465,7 @@ class EnJikenParser(JikenParser):
     def attrs_setup(self, attrs):
         attrs = self._attrs_setup_missing(attrs)
         attrs = self._make_full_text(attrs)
+        attrs = self._interactive_attr_fallback(attrs)
         return attrs
 
     def _attrs_setup_missing(self, attrs):
@@ -483,6 +484,51 @@ class EnJikenParser(JikenParser):
             u'Presiding Judge:',
             judge,
         ])
+        return attrs
+
+
+    class _fallback:
+
+        interactive_prefix = u'(hanreifetch-fallback) '
+        @classmethod
+        def interactive(klass, msg):
+            print(klass.interactive_prefix + msg)
+
+        @classmethod
+        def handle_interactive(klass, missing_key):
+            selections = klass.user_selections
+            klass.interactive(u'Hanrei attribute missing: "{}".'.format(missing_key))
+            while True:
+                klass.interactive(u'What to do?:')
+                for key in selections:
+                    selection_attrs = selections[key]
+                    klass.interactive(u'{}) {}'.format(unicode(key), selection_attrs['msg']))
+                selected = unicode(raw_input(u'#?: '))
+                if not selected.isnumeric():
+                    continue
+                selected = int(selected)
+                if selected in selections:
+                    break
+            return selections[selected]['func'](missing_key)
+
+        def _user_message(missing_key):
+            fill = unicode(raw_input(u'Type your message({key} is available):'))
+            return fill.format(key=missing_key)
+        def _as_error(missing_key):
+            raise RuntimeError('Hanrei attribute missing: "{}"'.format(missing_key))
+
+        user_selections = {
+            1: dict(msg=u'Insert empty string', func=(lambda key: u'')),
+            2: dict(msg=u'Insert error message', func=_user_message),
+            3: dict(msg=u'Terminate as error', func=_as_error),
+        }
+
+
+    def _interactive_attr_fallback(self, attrs):
+        for attr_key in HANREI_ATTRS:
+            if attr_key not in attrs:
+                fallback_value = self.__class__._fallback.handle_interactive(attr_key)
+                attrs[attr_key] = fallback_value
         return attrs
 
     def create_full_text_elem(self, hanrei_struct):
