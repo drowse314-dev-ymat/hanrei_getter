@@ -3,7 +3,7 @@ Case number||1998 (Kyo) No. 8;
 Reporter||Minshu Vol. 53, No. 4, at 740;
 Title||Decision concerning whether or not the person who has established a pledge upon his/her claim against another party is allowed to petition, based on the claim, for bankruptcy of the other party (debtor of the claim);
 Case name||Case of appeal with permission against the decision to dismiss an appeal against the decision to dismiss the petition for bankruptcy;
-Result||Decision of the Second Petty Bench, dismissed;
+Result||Decision of the Second Petty Bench, partly quashed and remanded, partly dismissed;
 Court of the Second Instance||Sapporo High Court, Decision of August 10, 1998;
 Summary of the decision||The person who has established a pledge upon his/her claim against another party may not petition, based on the claim, for bankruptcy of another party (the debtor of the claim) unless there are special circumstances such as the pledgee having given consent to do so.;
 References||Article 367 of the Civil Code, Article 132 of the Bankruptcy Act <br/>

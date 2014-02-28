@@ -3,7 +3,7 @@ jiken_name||Case of appeal with permission against the decision to dismiss an ap
 date||1999.04.16;
 court||The Second Petty Bench;
 trial_type||Decision;
-decision||Dismissed;
+decision||Partly quashed and remanded, partly dismissed;
 reference||Minshu Vol. 53, No. 4, at 740;
 origin_court||Sapporo High Court;
 origin_jiken_no||;

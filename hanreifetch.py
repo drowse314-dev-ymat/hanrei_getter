@@ -373,7 +373,7 @@ def _origin_dater(origin_info_text):
 EN_HANREI_ATTR_CONVERTERS = {
     'trial_type': (lambda v: v.split(u' of ')[0]),
     'court': (lambda v: v.split(u' of ')[1].split(u',')[0].title()),
-    'decision': (lambda v: v.split(u', ')[1].capitalize()),
+    'decision': (lambda v: v.split(u', ', 1)[1].capitalize()),
     'origin_date': (lambda v: _origin_dater(v)),
     'origin_court': (lambda v: v.split(u',')[0]),
 }
