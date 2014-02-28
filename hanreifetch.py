@@ -364,6 +364,8 @@ EN_HANREI_ATTR_NAME_MAP = {
     u'Reasons': u'full_text_reason',
     u'Presiding Judge': u'full_text_judge',
 }
+def _decision_splitter(origin_result_info):
+    return re.split(u'[,;] ', origin_result_info, maxsplit=1)
 def _origin_dater(origin_info_text):
     parts = origin_info_text.split(u' of ')
     if len(parts) < 2:
@@ -372,8 +374,8 @@ def _origin_dater(origin_info_text):
         return parts[1]
 EN_HANREI_ATTR_CONVERTERS = {
     'trial_type': (lambda v: v.split(u' of ')[0]),
-    'court': (lambda v: v.split(u' of ')[1].split(u',')[0].title()),
-    'decision': (lambda v: v.split(u', ', 1)[1].capitalize()),
+    'court': (lambda v: _decision_splitter(v)[0].split(u' of ')[1].title()),
+    'decision': (lambda v: _decision_splitter(v)[1].capitalize()),
     'origin_date': (lambda v: _origin_dater(v)),
     'origin_court': (lambda v: v.split(u',')[0]),
 }

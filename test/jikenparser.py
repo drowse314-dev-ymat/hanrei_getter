@@ -132,6 +132,26 @@ def create_en_hanrei_xml():
     expected_xml = sample_en_jiken_xml()
     assert hanrei_xml == expected_xml
 
+def en_attr_conversions():
+    # test some complex converters
+    en_converters = hanreifetch.EN_HANREI_ATTR_CONVERTERS
+    for_trial = en_converters['trial_type']
+    for_court = en_converters['court']
+    for_decision = en_converters['decision']
+    # conversions for trial, court, decision
+    simple = u'Desicion of the First Petty Bench, quashed and remanded'
+    assert for_trial(simple) == u'Desicion'
+    assert for_court(simple) == u'The First Petty Bench'
+    assert for_decision(simple) == u'Quashed and remanded'
+    multiseps = u'Judgment of the Third Petty Bench, partially quashed and remanded, partially dismissed'
+    assert for_trial(multiseps) == u'Judgment'
+    assert for_court(multiseps) == u'The Third Petty Bench'
+    assert for_decision(multiseps) == u'Partially quashed and remanded, partially dismissed'
+    semicolon = u'Judgment of the Second Petty Bench; dismissed'
+    assert for_trial(semicolon) == u'Judgment'
+    assert for_court(semicolon) == u'The Second Petty Bench'
+    assert for_decision(semicolon) == u'Dismissed'
+
 
 def jikenparser_unit(noweb=False):
     tests = Tests()
@@ -147,4 +167,5 @@ def jikenparser_unit(noweb=False):
         tests.test(create_hanrei_elem)
         tests.test(create_hanrei_xml)
     tests.test(create_en_hanrei_xml)
+    tests.test(en_attr_conversions)
     return tests
