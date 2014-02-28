@@ -155,6 +155,10 @@ def en_attr_conversions():
     assert for_trial(itstoosimple) == u''
     assert for_court(itstoosimple) == u''
     assert for_decision(itstoosimple) == u'Dismissed'
+    yet_another_fucking_format = u'The First Petit Bench, Supreme Court, Judgment<br/ > \n[Result]  Dismissed'
+    assert for_trial(yet_another_fucking_format) == u'Judgment'
+    assert for_court(yet_another_fucking_format) == u'The First Petit Bench, Supreme Court'
+    assert for_decision(yet_another_fucking_format) == u'Dismissed'
 
 
 def jikenparser_unit(noweb=False):

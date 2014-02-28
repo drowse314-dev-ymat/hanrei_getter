@@ -367,9 +367,18 @@ EN_HANREI_ATTR_NAME_MAP = {
 def _decision_splitter(origin_result_info):
     parts = re.split(u'[,;] ', origin_result_info, maxsplit=1)
     if len(parts) < 2:
-        return [u' of ', parts[0]]
+        decision = parts[0]
+        trial, court = u'', u''
+    elif u'of' not in origin_result_info:
+        tag_removed = re.sub(u'<.+?>', u'', origin_result_info)
+        head, tail = re.split(u'\s*\n+\s*', tag_removed)
+        court, trial = head.rsplit(u', ', 1)
+        decision = tail.split(u'[Result]')[1].strip()
     else:
-        return parts
+        trial, court = parts[0].split(u' of ')
+        court = court.title()
+        decision = parts[1].capitalize()
+    return trial, court, decision
 def _origin_dater(origin_info_text):
     parts = origin_info_text.split(u' of ')
     if len(parts) < 2:
@@ -377,9 +386,9 @@ def _origin_dater(origin_info_text):
     else:
         return parts[1]
 EN_HANREI_ATTR_CONVERTERS = {
-    'trial_type': (lambda v: _decision_splitter(v)[0].split(u' of ')[0]),
-    'court': (lambda v: _decision_splitter(v)[0].split(u' of ')[1].title()),
-    'decision': (lambda v: _decision_splitter(v)[1].capitalize()),
+    'trial_type': (lambda v: _decision_splitter(v)[0]),
+    'court': (lambda v: _decision_splitter(v)[1]),
+    'decision': (lambda v: _decision_splitter(v)[2]),
     'origin_date': (lambda v: _origin_dater(v)),
     'origin_court': (lambda v: v.split(u',')[0]),
 }
