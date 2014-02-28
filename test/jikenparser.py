@@ -152,7 +152,6 @@ def en_attr_conversions():
     assert for_court(semicolon) == u'The Second Petty Bench'
     assert for_decision(semicolon) == u'Dismissed'
     itstoosimple = u'Dismissed'
-    print(for_trial(itstoosimple))
     assert for_trial(itstoosimple) == u''
     assert for_court(itstoosimple) == u''
     assert for_decision(itstoosimple) == u'Dismissed'
