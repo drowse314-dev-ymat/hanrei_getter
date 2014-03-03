@@ -372,25 +372,26 @@ def _decision_splitter(origin_result_info):
     elif u'of' not in origin_result_info:
         tag_removed = re.sub(u'<.+?>', u'', origin_result_info)
         head, tail = re.split(u'\s*\n+\s*', tag_removed)
-        court, trial = head.rsplit(u', ', 1)
-        decision = tail.split(u'[Result]')[1].strip()
+        court, trial = head.rsplit(u',', 1)
+        decision = tail.split(u'[Result]')[1]
     else:
-        trial, court = parts[0].split(u' of ')
+        trial, court = parts[0].split(u'of')
         court = court.title()
         decision = parts[1].capitalize()
+    trial, court, decision = trial.strip(), court.strip(), decision.strip()
     return trial, court, decision
 def _origin_dater(origin_info_text):
-    parts = origin_info_text.split(u' of ')
+    parts = origin_info_text.split(u'of')
     if len(parts) < 2:
         return u''
     else:
-        return parts[1]
+        return parts[1].strip()
 EN_HANREI_ATTR_CONVERTERS = {
     'trial_type': (lambda v: _decision_splitter(v)[0]),
     'court': (lambda v: _decision_splitter(v)[1]),
     'decision': (lambda v: _decision_splitter(v)[2]),
     'origin_date': (lambda v: _origin_dater(v)),
-    'origin_court': (lambda v: v.split(u',')[0]),
+    'origin_court': (lambda v: v.split(u',')[0].strip()),
 }
 
 
