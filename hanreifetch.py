@@ -357,7 +357,7 @@ EN_HANREI_ATTR_NAME_MAP = {
     u'Case number': u'jiken_no', u'Reporter': u'reference',
     u'Title': None, u'Case name': u'jiken_name',
     u'Result': [u'trial_type', u'court', u'decision'],
-    u'Court of the Second Instance': [u'origin_court', u'origin_date'],
+    u'Court of the': [u'origin_court', u'origin_date'],
     u'Summary': u'abstract',
     u'References': u'referred_legislation',
     u'Main text': u'full_text_main',
@@ -444,7 +444,7 @@ class EnJikenParser(JikenParser):
                 text += desc.tail
         return text
 
-    hookers = [u'Date', u'Summary', u'Main text']
+    hookers = [u'Date', u'Summary', u'Main text', u'Court of the']
     def attr_name_hook(self, attr_name):
         for common_seq in self.__class__.hookers:
             if attr_name.startswith(common_seq):
