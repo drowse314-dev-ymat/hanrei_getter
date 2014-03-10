@@ -5,49 +5,52 @@ from attest import Tests
 import hanreifetch
 
 
+DATA_PREFIX_JP = ['data', 'jp']
+DATA_PREFIX_EN = ['data', 'en']
+
 SAMPLE_LIST = os.path.abspath(os.path.sep.join(
-    [os.path.dirname(__file__), 'h01_o_01.htm']
+    [os.path.dirname(__file__)] + DATA_PREFIX_JP + ['h01_o_01.htm']
 ))
 SAMPLE_EN_LIST = os.path.abspath(os.path.sep.join(
-    [os.path.dirname(__file__), 'en_jiken_list.html']
+    [os.path.dirname(__file__)] + DATA_PREFIX_EN + ['en_jiken_list.html']
 ))
 SAMPLE_JIKEN_URLS = os.path.abspath(os.path.sep.join(
-    [os.path.dirname(__file__), 'h01_o_01_jiken_links.txt']
+    [os.path.dirname(__file__)] + DATA_PREFIX_JP + ['h01_o_01_jiken_links.txt']
 ))
 SAMPLE_EN_JIKEN_URLS = os.path.abspath(os.path.sep.join(
-    [os.path.dirname(__file__), 'en_jiken_links.txt']
+    [os.path.dirname(__file__)] + DATA_PREFIX_EN + ['en_jiken_links.txt']
 ))
 SAMPLE_JIKEN = os.path.abspath(os.path.sep.join(
-    [os.path.dirname(__file__), 'jiken.html']
+    [os.path.dirname(__file__)] + DATA_PREFIX_JP + ['jiken.html']
 ))
 SAMPLE_EN_JIKEN = os.path.abspath(os.path.sep.join(
-    [os.path.dirname(__file__), 'en_jiken.html']
+    [os.path.dirname(__file__)] + DATA_PREFIX_EN + ['en_jiken.html']
 ))
 SAMPLE_JIKEN_ORIGIN = u'http://www.courts.go.jp/search/jhsp0030?hanreiid=52285&hanreiKbn=02'
 SAMPLE_JIKEN_ATTRS = os.path.abspath(os.path.sep.join(
-    [os.path.dirname(__file__), 'jiken_attr_pairs.txt']
+    [os.path.dirname(__file__)] + DATA_PREFIX_JP + ['jiken_attr_pairs.txt']
 ))
 SAMPLE_EN_JIKEN_ATTRS = os.path.abspath(os.path.sep.join(
-    [os.path.dirname(__file__), 'en_jiken_attr_pairs.txt']
+    [os.path.dirname(__file__)] + DATA_PREFIX_EN + ['en_jiken_attr_pairs.txt']
 ))
 SAMPLE_JIKEN_STRUCT = os.path.abspath(os.path.sep.join(
-    [os.path.dirname(__file__), 'jiken_struct_attrs.txt']
+    [os.path.dirname(__file__)] + DATA_PREFIX_JP + ['jiken_struct_attrs.txt']
 ))
 SAMPLE_EN_JIKEN_STRUCT = os.path.abspath(os.path.sep.join(
-    [os.path.dirname(__file__), 'en_jiken_struct_attrs.txt']
+    [os.path.dirname(__file__)] + DATA_PREFIX_EN + ['en_jiken_struct_attrs.txt']
 ))
 SAMPLE_HANREI_FULL_TEXT = os.path.abspath(os.path.sep.join(
-    [os.path.dirname(__file__), 'hanrei_full_text.txt']
+    [os.path.dirname(__file__)] + DATA_PREFIX_JP + ['hanrei_full_text.txt']
 ))
 SAMPLE_HANREI_PDF = os.path.abspath(os.path.sep.join(
-    [os.path.dirname(__file__), 'hanrei_pdf.pdf']
+    [os.path.dirname(__file__)] + DATA_PREFIX_JP + ['hanrei_pdf.pdf']
 ))
 SAMPLE_HANREI_PDF_ORIGIN = u'http://www.courts.go.jp/hanrei/pdf/js_20100319120650476715.pdf'
 SAMPLE_JIKEN_XML = os.path.abspath(os.path.sep.join(
-    [os.path.dirname(__file__), 'jiken_xml.xml']
+    [os.path.dirname(__file__)] + DATA_PREFIX_JP + ['jiken_xml.xml']
 ))
 SAMPLE_EN_JIKEN_XML = os.path.abspath(os.path.sep.join(
-    [os.path.dirname(__file__), 'en_jiken_xml.xml']
+    [os.path.dirname(__file__)] + DATA_PREFIX_EN + ['en_jiken_xml.xml']
 ))
 
 
