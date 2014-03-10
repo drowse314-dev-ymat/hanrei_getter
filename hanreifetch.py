@@ -345,11 +345,20 @@ class JikenParser(object):
         for html_text, hanrei_id in hanrei_html_texts:
             hanrei_elem = self.create_hanrei_element(html_text, hanreiid=hanrei_id)
             root.append(hanrei_elem)
+        self._amp_escapify(root)
         xml = etree.tostring(
             root, pretty_print=True,
             xml_declaration=True, encoding=XML_ENCODING,
         ).decode(XML_ENCODING)
         return self._clean_entity(xml)
+
+    re_nonentity_ampersand = re.compile(u'&(?!\w+;)')
+
+    def _amp_escapify(self, element):
+        re_ampersand = self.__class__.re_nonentity_ampersand
+        for node in element.iterdescendants():
+            if node.text is not None:
+                node.text = re_ampersand.sub(u'&amp;', node.text)
 
 
 EN_HANREI_ATTR_NAME_MAP = {
