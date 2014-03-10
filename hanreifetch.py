@@ -408,6 +408,7 @@ class EnJikenParser(JikenParser):
 
     attr_map = EN_HANREI_ATTR_NAME_MAP
     attr_converters = EN_HANREI_ATTR_CONVERTERS
+    attr_interactive_default = None
 
     def attrs_from_elem(self, elem):
         if elem.tag == u'table':
@@ -500,7 +501,7 @@ class EnJikenParser(JikenParser):
             print(klass.interactive_prefix + msg)
 
         @classmethod
-        def handle_interactive(klass, missing_key):
+        def handle_interactive(klass, missing_key, passit=None):
             selections = klass.user_selections
             klass.interactive(u'Hanrei attribute missing: "{}".'.format(missing_key))
             while True:
@@ -508,7 +509,11 @@ class EnJikenParser(JikenParser):
                 for key in selections:
                     selection_attrs = selections[key]
                     klass.interactive(u'{}) {}'.format(unicode(key), selection_attrs['msg']))
-                selected = unicode(raw_input(u'#?: '))
+                if passit is None:
+                    selected = unicode(raw_input(u'#?: '))
+                else:
+                    selected = unicode(passit)
+                    klass.interactive(u'auto select #{}'.format(passit))
                 if not selected.isnumeric():
                     continue
                 selected = int(selected)
@@ -532,7 +537,10 @@ class EnJikenParser(JikenParser):
     def _interactive_attr_fallback(self, attrs):
         for attr_key in HANREI_ATTRS:
             if attr_key not in attrs:
-                fallback_value = self.__class__._fallback.handle_interactive(attr_key)
+                fallback_value = self.__class__._fallback.handle_interactive(
+                    attr_key,
+                    passit=self.attr_interactive_default,  # overridable on instances
+                )
                 attrs[attr_key] = fallback_value
         return attrs
 

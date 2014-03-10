@@ -33,10 +33,11 @@ def make_xml_filname(source_html_path):
 
 class HanreiXMLCreator(object):
 
-    def __init__(self, en_list=False):
+    def __init__(self, en_list=False, en_missing_default=None):
         if en_list:
             self._listhandler = hanreifetch.EnListHandler()
             self._jikenparser = hanreifetch.EnJikenParser()
+            self._jikenparser.attr_interactive_default = en_missing_default
         else:
             self._listhandler = hanreifetch.ListHandler()
             self._jikenparser = hanreifetch.JikenParser()
@@ -100,7 +101,10 @@ def run(args):
     num_htmls = len(html_paths)
     logger.notice(u'{} html files found.'.format(num_htmls))
 
-    xml_creator = HanreiXMLCreator(en_list=args.en_list)
+    xml_creator = HanreiXMLCreator(
+        en_list=args.en_list,
+        en_missing_default=args.en_missing_default,
+    )
 
     for i, html_path in enumerate(html_paths, start=1):
 
@@ -112,5 +116,14 @@ if __name__ == '__main__':
     argX = argparse.ArgumentParser()
     argX.add_argument('target_dirs', nargs='+')
     argX.add_argument('--en_list', action='store_true', default=False)
+    argX.add_argument(
+        '--en_missing_default', choices=[u'1', u'2', u'3'], default=None,
+        help=(
+            'set default action on interactive fallback of missing attributes:'
+            ' 1: leave empty /'
+            ' 2: input message yourself /'
+            ' 3: raise error'
+        ),
+    )
     args = argX.parse_args()
     run(args)
