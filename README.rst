@@ -14,7 +14,12 @@
 * Python2.7およびvirtualenv
 * pdftotext
 
-判例をダウンロードするには、まず `検索システム <http://www.courts.go.jp/search/jhsp0010?action_id=first&hanreiSrchKbn=02>`_ の事件リストページを収集します。
+判例をダウンロードするには、まず `検索システム <http://www.courts.go.jp/search/jhsp0010?action_id=first&hanreiSrchKbn=02>`_
+の事件リストページを収集します。
+事件リストページとは、検索フォームを適切に埋めて **検索** ボタンで送信すると現れるリスト表示のページで、
+``http://www.courts.go.jp/search/jhsp0010Back.action`` や ``http://www.courts.go.jp/search/jhsp0010List2``
+のようなURIをもつ動的なものになっているはずです。
+これらはクッキー制御が厳しくなっているため、ブラウザの保存機能で取得するのが最も手短な仕方だと思われます。
 このとき、ファイル名の形式を :code:`<any text>_<category>_<any text>.html` のようにすると、 https://github.com/drowse314-dev-ymat/hanrei_abstract_extractor との連携に役立ちます。
 
 .. code-block:: txt
