@@ -4,7 +4,7 @@
 概要
 ~~~~
 `最高裁の判例検索 <http://www.courts.go.jp/search/jhsp0010?action_id=first&hanreiSrchKbn=02>`_ の結果(html)から判例をなるべく穏便に取得するためのスクリプトです。
-30秒のリクエストディレイをはさみながら、 :code:`<HanreiData><Hanrei>...</Hanrei>...</HanreiData>` というようなXMLを生成していきます。
+30秒のリクエストディレイをはさみながら、 ``<HanreiData><Hanrei>...</Hanrei>...</HanreiData>`` というようなXMLを生成していきます。
 
 動かし方
 ~~~~~~~~
@@ -35,10 +35,10 @@
 判例は検索結果リストのhtmlファイル単位でダウンロードされ、ひとつのリストにリンクが含まれる判例群から
 ひとつのXMLファイルが生成されます。
 XMLファイルは、 `hanreidata </hanreidata>`_ 内に順次蓄積されます。
-ファイル名は `<file name>.html` に対して `<file name>.xml` となります。
+ファイル名は ``<file name>.html`` に対して ``<file name>.xml`` となります。
 
 検索結果リストは、複数のディレクトリから参照することができます。
-その場合は単純に、 :code:`python run.py list_dir1 [list_dir2 list_dir3 ...]` とします。
+その場合は単純に、 ``python run.py list_dir1 [list_dir2 list_dir3 ...]`` とします。
 
 英語判例の取得
 ~~~~~~~~~~~~~~
@@ -50,10 +50,10 @@ XMLファイルは、 `hanreidata </hanreidata>`_ 内に順次蓄積されます
     python run.py english_list_dir --en_list
 
 英語版では様々なデータ抜けが発生し、すぐに異常終了してしまうかもしれません。
-その場合は、ブランチを `interactive_fallback` に切替えると、エラーが送出される前に抜け属性をスキップするか、
+その場合は、ブランチを ``interactive_fallback`` に切替えると、エラーが送出される前に抜け属性をスキップするか、
 または補完するかどうか等を対話的に選択することができます。
-`--en_fill_empty` オプションを付加すると、この選択を自動化することができます。
-オプションの詳細については、 :code:`python run.py --help` を参照して下さい。
+``--en_fill_empty`` オプションを付加すると、この選択を自動化することができます。
+オプションの詳細については、 ``python run.py --help`` を参照して下さい。
 
 ダウンロードの中断
 ~~~~~~~~~~~~~~~~~~
