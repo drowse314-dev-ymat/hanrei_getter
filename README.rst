@@ -4,7 +4,8 @@
 概要
 ~~~~
 `最高裁の判例検索 <http://www.courts.go.jp/search/jhsp0010?action_id=first&hanreiSrchKbn=02>`_ の結果(html)から判例をなるべく穏便に取得するためのスクリプトです。
-30秒のリクエストディレイをはさみながら、 ``<HanreiData><Hanrei>...</Hanrei>...</HanreiData>`` というようなXMLを生成していきます。
+30秒のリクエストディレイをはさみながら、 ``<HanreiRecords><Hanrei>...</Hanrei>...</HanreiRecords>``
+というようなXMLを生成していきます。
 
 動かし方
 ~~~~~~~~
