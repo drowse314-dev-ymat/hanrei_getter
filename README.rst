@@ -62,6 +62,11 @@ XMLファイルは、 `hanreidata </hanreidata>`_ 内に順次蓄積されます
 ``--en_missing_default`` オプションを付加すると、この選択を自動化することができます。
 オプションの詳細については、 ``python run.py --help`` を参照して下さい。
 
+.. code-block:: sh
+
+    git checkout interactive_fallback
+    python run.py english_list_dir --en_list --en_missing_default 1  # 全て自動的に空欄に
+
 ダウンロードの中断
 ~~~~~~~~~~~~~~~~~~
 ダウンロード中に異常終了した場合、あるいは割り込みによって終了した場合、同じリストについてまたダウンロードを始めると、
