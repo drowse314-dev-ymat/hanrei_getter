@@ -33,6 +33,7 @@
 
 .. code-block:: sh
 
+    cd hanrei_getter
     virtualenv-2.7 venv # 名前はなんでも
     source venv/bin/activate
     pip install -r requirements.txt
