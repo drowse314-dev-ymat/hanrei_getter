@@ -33,6 +33,7 @@
 
 .. code-block:: sh
 
+    cd hanrei_getter
     virtualenv-2.7 venv # 名前はなんでも
     source venv/bin/activate
     pip install -r requirements.txt
@@ -60,6 +61,11 @@ XMLファイルは、 `hanreidata </hanreidata>`_ 内に順次蓄積されます
 または補完するかどうか等を対話的に選択することができます。
 ``--en_missing_default`` オプションを付加すると、この選択を自動化することができます。
 オプションの詳細については、 ``python run.py --help`` を参照して下さい。
+
+.. code-block:: sh
+
+    git checkout interactive_fallback
+    python run.py english_list_dir --en_list --en_missing_default 1  # 全て自動的に空欄に
 
 ダウンロードの中断
 ~~~~~~~~~~~~~~~~~~
