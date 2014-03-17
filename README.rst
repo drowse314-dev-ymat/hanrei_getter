@@ -33,11 +33,11 @@
 
 .. code-block:: sh
 
-    cd hanrei_getter
-    virtualenv-2.7 venv # 名前はなんでも
-    source venv/bin/activate
-    pip install -r requirements.txt
-    python run.py /path/to/minji_searches
+    $ cd hanrei_getter
+    $ virtualenv-2.7 venv # 名前はなんでも
+    $ source venv/bin/activate
+    $ pip install -r requirements.txt
+    $ python run.py /path/to/minji_searches
 
 判例は検索結果リストのhtmlファイル単位でダウンロードされ、ひとつのリストにリンクが含まれる判例群から
 ひとつのXMLファイルが生成されます。
@@ -54,7 +54,7 @@ XMLファイルは、 `hanreidata </hanreidata>`_ 内に順次蓄積されます
 
 .. code-block:: sh
 
-    python run.py english_list_dir --en_list
+    $ python run.py english_list_dir --en_list
 
 英語版では様々なデータ抜けが発生し、すぐに異常終了してしまうかもしれません。
 その場合は、ブランチを ``interactive_fallback`` に切替えると、エラーが送出される前に抜け属性をスキップするか、
@@ -64,8 +64,8 @@ XMLファイルは、 `hanreidata </hanreidata>`_ 内に順次蓄積されます
 
 .. code-block:: sh
 
-    git checkout interactive_fallback
-    python run.py english_list_dir --en_list --en_missing_default 1  # 全て自動的に空欄に
+    $ git checkout interactive_fallback
+    $ python run.py english_list_dir --en_list --en_missing_default 1  # 全て自動的に空欄に
 
 ダウンロードの中断
 ~~~~~~~~~~~~~~~~~~
