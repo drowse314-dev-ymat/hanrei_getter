@@ -22,7 +22,7 @@
 これらはクッキー制御が厳しくなっているため、ブラウザの保存機能で取得するのが最も手短な仕方だと思われます。
 このとき、ファイル名の形式を :code:`<any text>_<category>_<any text>.html` のようにすると、 https://github.com/drowse314-dev-ymat/hanrei_abstract_extractor との連携に役立ちます。
 
-.. code-block:: txt
+.. code-block::
 
     minji_searches
     ├── minji_ju_page1.html
